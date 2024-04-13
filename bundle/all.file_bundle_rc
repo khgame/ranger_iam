@@ -1,0 +1,15 @@
+entry = [
+    "./**/*.go",
+    "./**/*.md",
+    "./**/*.yml",
+    "./**/*.puml",
+    "./**/*.mermaid",
+    "./**/*.sql",
+    "./**/*.http",
+    "Makefile",
+]
+
+exclude = [
+    ".bundle.txt",
+    "./script"
+]

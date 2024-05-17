@@ -20,7 +20,10 @@
 │   │   └── http-client.env.json
 │   └── docker-compose.yml
 ├── doc
-│   └── PROJECT_STRUCTURE.md
+│   ├── PROJECT_STRUCTURE.md
+│   ├── docs.go
+│   ├── swagger.json
+│   └── swagger.yaml
 ├── internal
 │   ├── repository
 │   │   ├── cache.go

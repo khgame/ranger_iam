@@ -29,8 +29,15 @@ func (svr *Service) ApplyMux(group gin.IRouter) {
 }
 
 // HandleValidate 处理验证请求
-// 根据策略选择长短票
-// 默认长票，降级时下发短票指令
+// @Summary 会话验证接口
+// @Description 验证用户的JWT是否有效；根据策略选择长短票；默认长票，降级时下发短票指令
+// @Tags session
+// @Accept  json
+// @Produce  json
+// @Param Authorization header string true "带有Bearer的Token"
+// @Success 200 {object} map[string]interface{} "验证成功返回用户UID"
+// @Failure 401 "无效或过期的Token"
+// @Router /session/validate [get]
 func (svr *Service) HandleValidate(c *gin.Context) {
 	token, err := auth.GetTokenStrFromHeader(c)
 	if err != nil {

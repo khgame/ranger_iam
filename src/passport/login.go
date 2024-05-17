@@ -19,6 +19,17 @@ type LoginRequest struct {
 }
 
 // HandleLogin 处理登录请求
+// @Summary 用户登录接口
+// @Description 用户使用用户名和密码登录
+// @Tags auth
+// @Accept  json
+// @Produce  json
+// @Param login body LoginRequest true "登录请求信息"
+// @Success 200 {object} map[string]interface{} "登录成功返回用户信息和token"
+// @Failure 400 "请求格式错误"
+// @Failure 401 "无效的用户名或密码"
+// @Failure 500 "服务器内部错误"
+// @Router /auth/login [post]
 func (svr *Service) HandleLogin(c *gin.Context) {
 	var req LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

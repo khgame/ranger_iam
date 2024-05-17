@@ -10,7 +10,7 @@ MIGRATION_SERVICE := migration
 MIGRATE_UP_PATH := migration/migrate_up.sql
 MIGRATE_DOWN_PATH := migration/migrate_down.sql
 
-.PHONY: default help gen-doc bundle compose-up compose-down compose-re compose-logs db-migrate-up db-migrate-down db-migrate-re dev build-dev build-app
+.PHONY: default help gen-doc bundle compose-up compose-down compose-re compose-logs db-migrate-up db-migrate-down db-migrate-re dev build-dev build-app dev-logs dev-shell
 
 # Default to help
 default: help
@@ -29,6 +29,7 @@ gen-doc:
 	@echo '```' > ./doc/PROJECT_STRUCTURE.md
 	@tree -I 'bundle*' --dirsfirst --noreport >> ./doc/PROJECT_STRUCTURE.md
 	@echo '```' >> ./doc/PROJECT_STRUCTURE.md
+	swag init -g cmd/main.go -o doc/
 
 # bundle, @see github.com/bagaking/file_bundle
 bundle: gen-doc
@@ -82,3 +83,9 @@ dev:
 # Start the built go application
 build-dev: build-app compose-re dev
 
+# Connect to the app container and follow the logs
+dev-logs:
+	$(DC) logs -f app
+
+dev-shell:
+	$(DC) exec app /bin/sh

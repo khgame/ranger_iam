@@ -3,13 +3,18 @@
 package app
 
 import (
+	"gorm.io/gorm"
+
+	"github.com/gin-gonic/gin"
+
+	"github.com/khgame/ranger_iam/doc"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
 	"github.com/khgame/ranger_iam/internal/util"
 	"github.com/khgame/ranger_iam/pkg/auth"
 	"github.com/khgame/ranger_iam/src/passport"
 	"github.com/khgame/ranger_iam/src/session"
-	"gorm.io/gorm"
-
-	"github.com/gin-gonic/gin"
 )
 
 // RegisterRoutes - routers all in one
@@ -31,5 +36,8 @@ func RegisterRoutes(router gin.IRouter, db *gorm.DB) {
 		svrPassport, _ := session.Init(db, jwtService)
 		svrPassport.ApplyMux(sessionGroup)
 	}
+
+	doc.SwaggerInfo.BasePath = "/api/v1"
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 }

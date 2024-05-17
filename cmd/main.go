@@ -59,5 +59,7 @@ func main() {
 	app.RegisterRoutes(group, db) // 注意: RegisterRoutes 函数签名需要接受 *gorm.DB 参数
 
 	// 开启HTTP服务
-	router.Run(":8080")
+	if err = router.Run(":8080"); err != nil {
+		log.Fatal(err)
+	}
 }

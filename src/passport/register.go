@@ -21,6 +21,16 @@ type ErrorMessage struct {
 }
 
 // HandleRegister 处理注册请求
+// @Summary 用户注册接口
+// @Description 用户填入用户名、邮箱和密码进行注册
+// @Tags auth
+// @Accept  json
+// @Produce  json
+// @Param register body RegisterRequest true "注册请求信息"
+// @Success 201 {object} map[string]any "注册成功返回新创建的用户信息和token"
+// @Failure 400 "请求格式错误或密码不匹配"
+// @Failure 500 "无法注册用户或生成token"
+// @Router /auth/register [post]
 func (svr *Service) HandleRegister(c *gin.Context) {
 	var req RegisterRequest
 

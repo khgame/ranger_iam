@@ -11,7 +11,7 @@ import (
 
 // JwtCustomClaims 包含JWT的声明
 type JwtCustomClaims struct {
-	UID uint `json:"uid"`
+	UID uint64 `json:"uid"`
 	jwt.StandardClaims
 }
 
@@ -30,7 +30,7 @@ func NewJWTService(secretKey, issuer string) *JWTService {
 }
 
 // GenerateToken 生成JWT令牌
-func (s *JWTService) GenerateToken(userID uint) (string, error) {
+func (s *JWTService) GenerateToken(userID uint64) (string, error) {
 	// 设置JWT声明
 	claims := &JwtCustomClaims{
 		userID, // 用户ID从数据库用户模型中带入

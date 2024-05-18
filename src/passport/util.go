@@ -14,7 +14,7 @@ func setCookie(w http.ResponseWriter, token string) {
 	})
 }
 
-func (svr *Service) genJWTTokenAndSetCookie(w http.ResponseWriter, userID uint) (token string, err error) {
+func (svr *Service) genJWTTokenAndSetCookie(w http.ResponseWriter, userID uint64) (token string, err error) {
 	token, err = svr.JWT.GenerateToken(userID)
 	if err != nil {
 		return "", err

@@ -56,7 +56,8 @@ func (cli *Cli) GinMW() gin.HandlerFunc {
 	}
 }
 
-func GetUID(c *gin.Context) (userID uint, exists bool) {
+// GetUIDFromGinCtx read the uid form gin-context
+func GetUIDFromGinCtx(c *gin.Context) (userID uint64, exists bool) {
 	val, exists := c.Get(UserCtxKey)
-	return val.(uint), exists
+	return val.(uint64), exists
 }

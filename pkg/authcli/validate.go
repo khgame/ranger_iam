@@ -10,7 +10,7 @@ import (
 )
 
 // AuthN 从 jwt 中直接获取 user_id 信息
-func (cli *Cli) AuthN(ctx context.Context, tokenStr string) (uint, error) {
+func (cli *Cli) AuthN(ctx context.Context, tokenStr string) (uint64, error) {
 	uid, err := cli.ValidateRemote(ctx, tokenStr)
 	if err == nil {
 		return uid, nil
@@ -29,7 +29,7 @@ func (cli *Cli) AuthN(ctx context.Context, tokenStr string) (uint, error) {
 // If the IAM server is unavailable or gives a degraded response,
 // it performs local JWT validation (long term ticket).
 // Otherwise, it opts for the short ticket.
-func (cli *Cli) ValidateRemote(ctx context.Context, token string) (uint, error) {
+func (cli *Cli) ValidateRemote(ctx context.Context, token string) (uint64, error) {
 	// Try to contact the IAM server
 	response, err := cli.httpClient.Get(cli.AuthNSvrURL + "api/v1/session/validate")
 	if err != nil || response.StatusCode != http.StatusOK {
@@ -46,7 +46,7 @@ func (cli *Cli) ValidateRemote(ctx context.Context, token string) (uint, error) 
 	// Server response can be used to get userID
 	defer response.Body.Close()
 	var res struct {
-		UID uint `json:"uid"`
+		UID uint64 `json:"uid"`
 	}
 	if err = json.NewDecoder(response.Body).Decode(&res); err != nil {
 		return 0, err

@@ -6,25 +6,32 @@ import (
 	"gorm.io/gorm"
 )
 
+type I64Model struct {
+	ID        uint64 `gorm:"primarykey"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index"`
+}
+
 // User 定义了用户账号管理模块的模型
 type User struct {
-	gorm.Model          // Includes ID, CreatedAt, UpdatedAt, DeletedAt fields
+	I64Model
+
 	Username     string `gorm:"uniqueIndex;not null"`
 	Email        string `gorm:"uniqueIndex;not null"`
 	PasswordHash string `gorm:"not null"`
-	TwoFactorID  uint   `gorm:"column:two_factor_setting_id"` // Reference to two-factor settings
 }
 
 type OAuthCredential struct {
-	gorm.Model
-	UserID     uint   `gorm:"index;not null"`
-	User       User   `gorm:"foreignKey:UserID;references:ID"`
+	I64Model
+
 	Provider   string `gorm:"not null"` // local, google, facebook, twitter, wechat
 	ProviderID string `gorm:"index"`
 }
 
 type TwoFactorSetting struct {
-	gorm.Model
+	I64Model
+
 	IsEnabled      bool
 	Phone          string
 	SecondaryEmail string

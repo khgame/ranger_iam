@@ -3,6 +3,8 @@ package model
 import (
 	"context"
 
+	"gorm.io/gorm/clause"
+
 	"gorm.io/gorm"
 )
 
@@ -59,14 +61,15 @@ func (repo *Repo) createUser(ctx context.Context, user *User, oauth *OAuthCreden
 	tx := repo.DB.WithContext(ctx).Begin()
 
 	if twoFactor != nil {
+		twoFactor.ID = user.ID
 		// 首先创建TwoFactorSetting，获取生成的ID
-		if err := tx.Create(&twoFactor).Error; err != nil {
+		if err := tx.Clauses(clause.OnConflict{
+			Columns:   []clause.Column{{Name: "id"}},
+			UpdateAll: true,
+		}).Create(twoFactor).Error; err != nil {
 			tx.Rollback()
 			return nil, err
 		}
-
-		// 设置用户的TwoFactorID外键
-		user.TwoFactorID = twoFactor.ID
 	}
 
 	// 接下来创建用户本身
@@ -77,7 +80,7 @@ func (repo *Repo) createUser(ctx context.Context, user *User, oauth *OAuthCreden
 
 	if oauth != nil {
 		// 然后设置OAuthCredential的UserID外键
-		oauth.UserID = user.ID
+		oauth.ID = user.ID
 
 		// 最后创建OAuthCredential条目
 		if err := tx.Create(&oauth).Error; err != nil {

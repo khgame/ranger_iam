@@ -20,10 +20,9 @@ import (
 // RegisterRoutes - routers all in one
 // todo: using rpc
 func RegisterRoutes(router gin.IRouter, db *gorm.DB) {
-
 	// todo: 这些值应该从配置中安全获取，现在 MVP 一下
 	jwtService := auth.NewJWTService("my_secret_key", util.DefaultJWTIssuer)
-	//nwAuth := jwtService.GinMW()
+	// nwAuth := jwtService.GinMW()
 
 	authGroup := router.Group("/auth")
 	{
@@ -39,5 +38,4 @@ func RegisterRoutes(router gin.IRouter, db *gorm.DB) {
 
 	doc.SwaggerInfo.BasePath = "/api/v1"
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
 }

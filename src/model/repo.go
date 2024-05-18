@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+
 	"gorm.io/gorm"
 )
 
@@ -54,7 +55,6 @@ func (repo *Repo) FindUserByName(username string) (*User, error) {
 }
 
 func (repo *Repo) createUser(ctx context.Context, user *User, oauth *OAuthCredential, twoFactor *TwoFactorSetting) (*User, error) {
-
 	// 开始数据库事务
 	tx := repo.DB.WithContext(ctx).Begin()
 

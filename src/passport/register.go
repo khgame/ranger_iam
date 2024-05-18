@@ -1,10 +1,11 @@
 package passport
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/khgame/ranger_iam/src/model"
 	"golang.org/x/crypto/bcrypt"
-	"net/http"
 )
 
 // RegisterRequest 定义注册请求的结构
@@ -59,7 +60,6 @@ func (svr *Service) HandleRegister(c *gin.Context) {
 		Email:    req.Email,
 		Password: string(hashedPassword),
 	})
-
 	if err != nil {
 		// 处理可能的数据库错误，如唯一性违反等
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to register user, " + err.Error()})

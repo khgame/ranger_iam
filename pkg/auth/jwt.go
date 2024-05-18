@@ -2,8 +2,9 @@ package auth
 
 import (
 	"errors"
-	"github.com/khicago/irr"
 	"time"
+
+	"github.com/khicago/irr"
 
 	jwt "github.com/dgrijalva/jwt-go"
 )
@@ -59,7 +60,6 @@ func (s *JWTService) ValidateToken(tokenString string) (*jwt.Token, error) {
 		}
 		return []byte(s.secretKey), nil
 	})
-
 	// 可能存在解析错误或令牌无效错误
 	if err != nil {
 		return nil, irr.Wrap(err, "token claims parse failed")

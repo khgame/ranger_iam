@@ -17,10 +17,10 @@ mkdir -p cmd \
          src/profile/handlers \
          src/profile/passport \
          src/profile/session \
-         internal/repository \
-         internal/utils \
-         internal/tests/unit \
-         internal/tests/integration
+         common/repository \
+         common/utils \
+         common/tests/unit \
+         common/tests/integration
 
 # 定义创建Go文件的函数
 create_go_file() {
@@ -72,12 +72,12 @@ declare -A go_files=(
     [src/profile/passport/login.go]="passport:Handler of user login"
     [src/profile/session/longterm.go]="session:Long-term session management logic"
     [src/profile/session/shortterm.go]="session:Short-term session management logic"
-    [internal/repository/rds.go]="repository:ORM-related operations, adapting SQL type databases"
-    [internal/repository/cache.go]="repository:Redis cache logic implementation"
-    [internal/repository/dc.go]="repository:Distributed configuration center logic implementation"
-    [internal/utils/utils.go]="utils:Utility functions for internal use"
-    [internal/tests/unit/calculator_test.go]="unit:Unit tests for the memory curve calculator"
-    [internal/tests/integration/api_test.go]="integration:Integration tests for API endpoints"
+    [common/repository/rds.go]="repository:ORM-related operations, adapting SQL type databases"
+    [common/repository/cache.go]="repository:Redis cache logic implementation"
+    [common/repository/dc.go]="repository:Distributed configuration center logic implementation"
+    [common/utils/utils.go]="utils:Utility functions for internal use"
+    [common/tests/unit/calculator_test.go]="unit:Unit tests for the memory curve calculator"
+    [common/tests/integration/api_test.go]="integration:Integration tests for API endpoints"
 )
 
 # 使用create_go_file函数创建Go文件

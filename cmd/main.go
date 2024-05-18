@@ -42,7 +42,6 @@ func dsn() string {
 }
 
 func main() {
-
 	// 初始化数据库连接
 	db, err := gorm.Open(mysql.Open(dsn()), &gorm.Config{})
 	if err != nil {

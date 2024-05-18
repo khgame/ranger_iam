@@ -55,3 +55,8 @@ func (cli *Cli) GinMW() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func GetUID(c *gin.Context) (userID uint, exists bool) {
+	val, exists := c.Get(UserCtxKey)
+	return val.(uint), exists
+}

@@ -1,7 +1,10 @@
 package passport
 
 import (
+	"context"
 	"net/http"
+
+	"github.com/bagaking/goulp/wlog"
 
 	"github.com/gin-gonic/gin"
 	"github.com/khgame/ranger_iam/src/model"
@@ -33,23 +36,27 @@ type ErrorMessage struct {
 // @Failure 500 "无法注册用户或生成token"
 // @Router /auth/register [post]
 func (svr *Service) HandleRegister(c *gin.Context) {
+	log := wlog.ByCtx(context.TODO(), c.HandlerName())
 	var req RegisterRequest
 
 	// 绑定请求体到结构体
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
+		log.WithError(err).Warnf("Invalid request payload")
 		return
 	}
 
 	// 验证两次输入的密码是否匹配
 	if req.Password != req.ConfirmPassword {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Passwords do not match"})
+		log.Warnf("Could not encrypt password")
 		return
 	}
 
 	// 密码加密
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
+		log.WithError(err).Errorf("Could not encrypt password")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not encrypt password"})
 		return
 	}
@@ -61,7 +68,7 @@ func (svr *Service) HandleRegister(c *gin.Context) {
 		Password: string(hashedPassword),
 	})
 	if err != nil {
-		// 处理可能的数据库错误，如唯一性违反等
+		log.WithError(err).Errorf("Failed to register user, email= %v, username= %v", req.Email, req.Username)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to register user, " + err.Error()})
 		return
 	}
@@ -69,10 +76,12 @@ func (svr *Service) HandleRegister(c *gin.Context) {
 	// 注册成功后生成JWT (short-ticket sample)
 	token, err := svr.genJWTTokenAndSetCookie(c.Writer, user.ID)
 	if err != nil {
+		log.WithError(err).Errorf("Failed to generate token, uid= %v", user.ID)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token, " + err.Error()})
 		return
 	}
 
+	log.Infof("create user sucsses, uid= %v", user.ID)
 	// 返回创建成功的用户信息（注意不返回密码等敏感信息）
 	c.JSON(http.StatusCreated, gin.H{
 		"user":  user,

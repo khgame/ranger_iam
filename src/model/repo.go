@@ -3,6 +3,9 @@ package model
 import (
 	"context"
 
+	"github.com/khgame/ranger_iam/internal/util"
+	"github.com/khicago/irr"
+
 	"gorm.io/gorm/clause"
 
 	"gorm.io/gorm"
@@ -31,15 +34,24 @@ type RegisterParams struct {
 func (repo *Repo) Register(ctx context.Context, params RegisterParams) (*User, error) {
 	// 通常你还需要在这里加密密码，这里为了简化示例，我们略过这一步
 	// passwordHash := HashPassword(params.Password)
+	id, err := util.GenIDU64(ctx)
+	if err != nil {
+		return nil, irr.Wrap(err, "generate id for new user failed")
+	}
 
-	// 使用Gorm创建新的用户记录
-	user, err := repo.createUser(ctx, &User{
+	user := &User{
+		I64Model: I64Model{
+			ID: id,
+		},
 		Username:     params.Username,
 		Email:        params.Email,
 		PasswordHash: params.Password, // 使用passwordHash代替明文密码
-	}, nil, nil)
+	}
+
+	// 使用Gorm创建新的用户记录
+	user, err = repo.createUser(ctx, user, nil, nil)
 	if err != nil {
-		return nil, err
+		return nil, irr.Wrap(err, "create user failed")
 	}
 
 	return user, nil

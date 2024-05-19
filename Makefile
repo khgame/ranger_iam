@@ -77,15 +77,15 @@ build-app: bundle
 dev:
 	$(DC) up -d app
 	@echo Starting app service...
-	$(DC) exec -d app /app/ranger_iam
+	#$(DC) exec -d app /app/ranger_iam
 	@echo App service has been started in the background.
 
 # Start the built go application
-build-dev: build-app compose-re dev
+build-dev: gen-doc build-app compose-re dev
 
 # Connect to the app container and follow the logs
 dev-logs:
-	$(DC) logs -f app
+	tail -f ./dev_ranger_iam/logs/ranger_iam.log
 
 dev-shell:
 	$(DC) exec app /bin/sh

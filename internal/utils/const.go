@@ -1,4 +1,4 @@
-package util
+package utils
 
 const (
 	KEYDegradedMode  = "X-Degraded-Mode"

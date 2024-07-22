@@ -11,7 +11,7 @@ import (
 
 	"github.com/bagaking/goulp/wlog"
 	"github.com/gin-gonic/gin"
-	"github.com/khgame/ranger_iam/internal/util"
+	"github.com/khgame/ranger_iam/internal/utils"
 	"github.com/khgame/ranger_iam/src/app"
 	"github.com/khicago/irr"
 	"github.com/sirupsen/logrus"
@@ -29,12 +29,14 @@ func dsn() string {
 
 	// todo: using config
 	host := "localhost"
-	switch util.Env() {
-	case util.RuntimeENVDev:
+	switch utils.Env() {
+	case utils.RuntimeENVDev:
 		host = "mysql"
-	case util.RuntimeENVProd:
-		host = "mysql"
-	case util.RuntimeENVLocal:
+	case utils.RuntimeENVProd:
+		host = "0.0.0.0"
+	case utils.RuntimeENVStaging:
+		host = "0.0.0.0"
+	case utils.RuntimeENVLocal:
 		fallthrough
 	default:
 	}
@@ -70,23 +72,30 @@ func main() {
 	router := gin.Default()
 	router.Use(
 		ginRecoveryWithLog(),
+		corsMiddleware(),
 	)
 
 	// 注入db实例到注册处理函数中
 	group := router.Group("/api/v1")
 	app.RegisterRoutes(group, db) // 注意: RegisterRoutes 函数签名需要接受 *gorm.DB 参数
 
-	wlog.Common("main").Infof("service start ..")
+	startLogger := wlog.Common("ranger_iam")
+	startLogger.Trace("ranger_iam initialed")
+	startLogger.Debug("ranger_iam initialed")
+	startLogger.Info("ranger_iam initialed")
+	startLogger.Info("service start ..")
+
 	// 开启HTTP服务
-	if err := router.Run(":8080"); err != nil {
-		wlog.Common("main").WithError(err).Infof("gin exit")
+	if err := router.Run(":8090"); err != nil {
+		startLogger.WithError(err).Infof("gin exit")
 	}
 }
 
 func mustInitDB() *gorm.DB {
-	db, err := gorm.Open(mysql.Open(dsn()), &gorm.Config{})
+	dsnStr := dsn()
+	db, err := gorm.Open(mysql.Open(dsnStr), &gorm.Config{})
 	if err != nil {
-		wlog.Common("main", "mustInitDB").Fatal("failed to connect database:", err)
+		wlog.Common("main", "mustInitDB").Fatalf("failed to connect database, dsn= %s, err= %s", dsnStr, err)
 	}
 	return db
 }
@@ -94,6 +103,16 @@ func mustInitDB() *gorm.DB {
 func mustInitLogger(fileLogger io.Writer) {
 	multiLogger := io.MultiWriter(fileLogger, os.Stdout)
 	logrus.SetOutput(multiLogger)
+
+	if utils.Env() == utils.RuntimeENVProd {
+		logrus.SetFormatter(&logrus.JSONFormatter{})
+		logrus.SetLevel(logrus.InfoLevel) // 设置日志记录级别
+	} else {
+		logrus.SetFormatter(&logrus.JSONFormatter{
+			PrettyPrint: true, // 这会让 JSON 输出更易读
+		})
+		logrus.SetLevel(logrus.DebugLevel) // 设置日志记录级别
+	}
 
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 	logrus.SetLevel(logrus.InfoLevel) // 设置日志记录级别
@@ -129,6 +148,23 @@ func ginRecoveryWithLog() gin.HandlerFunc {
 		}()
 
 		// 处理请求
+		c.Next()
+	}
+}
+
+// corsMiddleware 处理跨域请求
+func corsMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Authorization, Accept, X-Requested-With")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusNoContent)
+			return
+		}
+
 		c.Next()
 	}
 }

@@ -8,7 +8,7 @@ services:
     environment:
       - RANGER_ENV=dev
     ports:
-      - "${RANGER_IAM_PORT:-18080}:8080"
+      - "${RANGER_IAM_PORT:-18090}:8090"
     depends_on:
       mysql:
         condition: service_healthy
@@ -47,7 +47,7 @@ services:
   redis:
     image: redis:latest
     ports:
-      - "${RANGER_IAM_REDIS_PORT:-16379}:6379"
+      - "127.0.0.1:${RANGER_IAM_REDIS_PORT:-16379}:6379"
     volumes:
       - ./redis-data:/data
     networks:

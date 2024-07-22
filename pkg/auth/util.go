@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -24,4 +25,9 @@ func GetTokenStrFromHeader(c *gin.Context) (string, error) {
 		return "", irr.Error("authorization schema is wrong")
 	}
 	return tokenStr, nil
+}
+
+// SetTokenStrToHeader 设置 header 里的 token 字符串
+func SetTokenStrToHeader(req *http.Request, token string) {
+	req.Header.Set(HeaderAuthorization, BearerSchema+token)
 }

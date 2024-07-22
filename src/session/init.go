@@ -3,6 +3,8 @@ package session
 import (
 	"net/http"
 
+	"github.com/bagaking/goulp/wlog"
+
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
@@ -42,12 +44,14 @@ func (svr *Service) ApplyMux(group gin.IRouter) {
 func (svr *Service) HandleValidate(c *gin.Context) {
 	token, err := auth.GetTokenStrFromHeader(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		wlog.ByCtx(c).WithError(err).Error("get token from header failed")
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	claims, err := svr.JWT.ValidateClaims(token)
 	if err != nil {
+		wlog.ByCtx(c).WithError(err).Error("validate token failed")
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}

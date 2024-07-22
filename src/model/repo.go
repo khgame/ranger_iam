@@ -3,7 +3,7 @@ package model
 import (
 	"context"
 
-	"github.com/khgame/ranger_iam/internal/util"
+	"github.com/khgame/ranger_iam/internal/utils"
 	"github.com/khicago/irr"
 
 	"gorm.io/gorm/clause"
@@ -34,7 +34,7 @@ type RegisterParams struct {
 func (repo *Repo) Register(ctx context.Context, params RegisterParams) (*User, error) {
 	// 通常你还需要在这里加密密码，这里为了简化示例，我们略过这一步
 	// passwordHash := HashPassword(params.Password)
-	id, err := util.GenIDU64(ctx)
+	id, err := utils.GenIDU64(ctx)
 	if err != nil {
 		return nil, irr.Wrap(err, "generate id for new user failed")
 	}

@@ -15,9 +15,6 @@
 │   ├── Dockerfile
 │   └── ci_cd.yaml
 ├── dev_ranger_iam
-│   ├── dial
-│   │   ├── auth.http
-│   │   └── http-client.env.json
 │   ├── logs
 │   │   └── ranger_iam.log
 │   ├── mysql-data
@@ -186,31 +183,18 @@
 │   │   │   ├── variables_by_thr_184.sdi
 │   │   │   └── variables_info_187.sdi
 │   │   ├── ranger_iam
+│   │   │   ├── user_oauth_credentials.ibd
+│   │   │   ├── user_two_factor_settings.ibd
+│   │   │   └── users.ibd
 │   │   ├── sys
 │   │   │   └── sys_config.ibd
 │   │   ├── #ib_16384_0.dblwr
 │   │   ├── #ib_16384_1.dblwr
 │   │   ├── auto.cnf
-│   │   ├── binlog.000001
-│   │   ├── binlog.000002
-│   │   ├── binlog.000003
-│   │   ├── binlog.000004
-│   │   ├── binlog.000005
-│   │   ├── binlog.000006
-│   │   ├── binlog.000007
-│   │   ├── binlog.000008
-│   │   ├── binlog.000009
-│   │   ├── binlog.000010
-│   │   ├── binlog.000011
-│   │   ├── binlog.000012
-│   │   ├── binlog.000013
-│   │   ├── binlog.000014
-│   │   ├── binlog.000015
-│   │   ├── binlog.000016
-│   │   ├── binlog.000017
-│   │   ├── binlog.000018
-│   │   ├── binlog.000019
-│   │   ├── binlog.000020
+│   │   ├── binlog.000025
+│   │   ├── binlog.000026
+│   │   ├── binlog.000027
+│   │   ├── binlog.000028
 │   │   ├── binlog.index
 │   │   ├── ca-key.pem
 │   │   ├── ca.pem
@@ -232,6 +216,9 @@
 │   │   └── dump.rdb
 │   └── docker-compose.yml
 ├── doc
+│   ├── dial
+│   │   ├── auth.http
+│   │   └── http-client.env.json
 │   ├── PROJECT_STRUCTURE.md
 │   ├── docs.go
 │   ├── swagger.json
@@ -241,7 +228,7 @@
 │   │   ├── cache.go
 │   │   ├── dc.go
 │   │   └── rds.go
-│   └── util
+│   └── utils
 │       ├── const.go
 │       ├── env.go
 │       └── id.go
@@ -255,6 +242,7 @@
 │       ├── refresh.go
 │       └── validate.go
 ├── script
+│   ├── build_staging.sh
 │   └── setup_project.sh
 ├── src
 │   ├── app
@@ -277,5 +265,7 @@
 ├── Makefile
 ├── README.md
 ├── go.mod
-└── go.sum
+├── go.sum
+├── ranger_iam
+└── set_env.sh
 ```

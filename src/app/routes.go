@@ -11,7 +11,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
-	"github.com/khgame/ranger_iam/internal/util"
+	"github.com/khgame/ranger_iam/internal/utils"
 	"github.com/khgame/ranger_iam/pkg/auth"
 	"github.com/khgame/ranger_iam/src/passport"
 	"github.com/khgame/ranger_iam/src/session"
@@ -21,7 +21,7 @@ import (
 // todo: using rpc
 func RegisterRoutes(router gin.IRouter, db *gorm.DB) {
 	// todo: 这些值应该从配置中安全获取，现在 MVP 一下
-	jwtService := auth.NewJWTService("my_secret_key", util.DefaultJWTIssuer)
+	jwtService := auth.NewJWTService("my_secret_key", utils.DefaultJWTIssuer)
 	// nwAuth := jwtService.GinMW()
 
 	authGroup := router.Group("/auth")

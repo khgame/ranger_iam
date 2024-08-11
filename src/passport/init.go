@@ -25,4 +25,5 @@ func Init(db *gorm.DB, jwtService *auth.JWTService) (*Service, error) {
 func (svr *Service) ApplyMux(group gin.IRouter) {
 	group.POST("/register", svr.HandleRegister)
 	group.POST("/login", svr.HandleLogin)
+	group.POST("/wechat/miniapp", svr.HandleLoginWechatMiniApp)
 }

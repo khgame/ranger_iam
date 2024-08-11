@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"errors"
 
 	"github.com/khgame/ranger_iam/internal/utils"
 	"github.com/khicago/irr"
@@ -63,6 +64,41 @@ func (repo *Repo) FindUserByName(username string) (*User, error) {
 	err := repo.DB.Where("username = ?", username).First(&user).Error
 	if err != nil {
 		return nil, err
+	}
+
+	return &user, nil
+}
+
+// UpsertUserByProvider 通过第三方提供者找到一个新用户
+func (repo *Repo) UpsertUserByProvider(ctx context.Context, provider string, providerID string) (*User, error) {
+	oauth := &OAuthCredential{
+		Provider:   provider,
+		ProviderID: providerID,
+	}
+	err := repo.DB.Where("provider = ? AND provider_id = ?", oauth.Provider, oauth.ProviderID).First(&oauth).Error
+	if err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, irr.Wrap(err, "find oauth failed")
+		}
+		// 新建用户, 并将 OAuthCredential 关联到新用户, 密码为空
+		user := &User{
+			Username:     provider + providerID,
+			PasswordHash: "",
+		}
+
+		user, err = repo.createUser(ctx, user, oauth, nil)
+		if err != nil {
+			return nil, irr.Wrap(err, "create user failed")
+		}
+
+		return user, nil
+	}
+
+	// 找到用户
+	var user User
+	err = repo.DB.Where("id = ?", oauth.ID).First(&user).Error
+	if err != nil {
+		return nil, irr.Wrap(err, "user not found")
 	}
 
 	return &user, nil

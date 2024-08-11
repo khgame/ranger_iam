@@ -36,6 +36,11 @@ func (svr *Service) HandleLogin(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
 		return
 	}
+	if req.Username == "" || req.Password == "" {
+		// Password 为空时，返回错误
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
+		return
+	}
 
 	// 查找用户，验证凭证
 	user, err := svr.Repo.FindUserByName(req.Username)

@@ -42,7 +42,7 @@ func dsn() string {
 	}
 
 	port := "3306"
-	dbname := "ranger_iam"
+	dbname := "memorianexus" // "ranger_iam"
 	charset := "utf8mb4"
 	loc := "Local"
 	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=True&loc=%s", username, password, host, port, dbname, charset, loc)
